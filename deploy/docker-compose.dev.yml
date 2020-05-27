@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  openldap:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == ${PLACEMENT_CONSTRAINTS_NODE_HOSTNAME:-hostname}
+
+volumes:
+  data-vol:
+    name: ${DATA_VOL_NAME}
+
+  config-vol:
+    name: ${CONFIG_VOL_NAME}

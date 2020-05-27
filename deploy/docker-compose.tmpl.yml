@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  openldap:
+    image: ${IMAGE_NAME:-osixia/openldap}:${IMAGE_TAG:-latest}
+    environment:
+      LDAP_ORGANISATION:
+      LDAP_DOMAIN:
+      LDAP_ADMIN_PASSWORD:
+      LDAP_CONFIG_PASSWORD:
+      LDAP_TLS:
+    networks:
+      auth-net:
+    volumes:
+      - data-vol:/var/lib/ldap
+      - config-vol:/etc/ldap/slapd.d
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+      restart_policy:
+        delay: ${RESTART_DELAY:-10s}
+      update_config:
+        delay: ${UPDATE_DELAY:-1m}
+      resources:
+        limits:
+          cpus: '${RESOURCES_LIMITS_CPUS:-0.1}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-64M}
+        reservations:
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-32M}
+
+networks:
+  auth-net:
+    name: ${AUTH_NET_NAME:-auth-net}
+    driver: ${AUTH_NET_DRIVER:-overlay}
+    attachable: ${AUTH_NET_ATTACHABLE:-true}
